@@ -1,7 +1,9 @@
 const query = document.getElementById('search')
         const submitBtn = document.getElementById('submit')
-        const BASE_URL = 'http://localhost:5001/api/words'
-
+        const BASE_URL = 'https://dic-jhr.herokuapp.com/api/words'
+        // const BASE_URL = 'http://localhost:5000/api/words'
+        
+        // 검색어에 특수문자가 들어간 경우 검색이 안되도록 함
         function checkIfStringHasSpecialCharacter(str) {
             const re = /[`!@#$%^&*()_+\-=\[\]{};':"\\|.<>\/?~]/;
             return re.test(str);
@@ -18,6 +20,7 @@ const query = document.getElementById('search')
         function enableSubmitBtn(state){
             submitBtn.disabled = state
         }
+
         // 서버 데이터 가져오기
         function getData(baseUrl, query){
             enableSubmitBtn(true) // 비활성화
@@ -25,12 +28,12 @@ const query = document.getElementById('search')
             // 사용자 입력 유효성 검증
             if(checkIfStringHasSpecialCharacter(query)){
                 enableSubmitBtn(false) // 활성화
-                container.innerHTML = "Your search keyword has special character. Retype only hangle! !"
+                container.innerHTML = "입력하신 검색어중 특수문자가 있습니다 올바르게 입력해주세요 !"
                 return;
             }
             if(checkIfStringHasNumbers(query)){
                 enableSubmitBtn(false) // 활성화
-                container.innerHTML = "Your search keyword has Numbers. Retype only hangle! !"
+                container.innerHTML = "입력하신 검색어중 숫자가 있습니다! 올바르게 입력해주세요 !"
                 return;
             }
             // if(checkIfStringHasLetters(query)){
@@ -38,6 +41,7 @@ const query = document.getElementById('search')
             //     container.innerHTML = "우리는 한국인입니다. 한글을 사랑하므로 한글 단어를 입력하세요!"
             //     return;
             // }
+
             fetch(`${baseUrl}/${query}`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -46,12 +50,13 @@ const query = document.getElementById('search')
            })
             .then( res => res.json() )
             .then( data => {
-                enableSubmitBtn(false) // 활성화
+                enableSubmitBtn(false) // 버튼 활성화
                 console.log(data)
                 const {words} = data;
+
                 // 데이터 유효성 검증
                 if(words.length === 0){
-                    container.innerHTML = "No Words Found !"
+                    container.innerHTML = "단어를 찾지 못했습니다 !"
                     return;
                 }
 
